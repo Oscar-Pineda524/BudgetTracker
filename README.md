@@ -2,7 +2,28 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+## Make sure that nodeJS is updated
+ - $node -v (to check version)
+ - $ sudo npm install -g n (install n package)
+ - $ sudo n latest (to download latest version)
+
+## If npm and Node.js are not installed
+- go to https://nodejs.org/en/download/
+- download the installer for your device and install 
+- to check version run $ node -v npm -v
+
+## Install tailwind CSS
+- $ npm install -D tailwindcss postcss autoprefixer
+- $ npx tailwindcss init -p
+
+## install react icons pkg
+- $ npm install react-icons --save
+
+
+
+
+
+## To run the development server:
 
 ```bash
 npm run dev
@@ -34,3 +55,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+

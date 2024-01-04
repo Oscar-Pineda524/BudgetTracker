@@ -20,7 +20,7 @@ function Navbar(){
         </div>
     
         {/*right side of the nav bar*/}
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-4">
             <div><ImStatsBars className="text-white text-2xl"/></div>
             <div>
             <button className="btn btn-danger">

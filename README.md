@@ -19,6 +19,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## install react icons pkg
 - $ npm install react-icons --save
 
+## Install charts.js pkg
+- $ npm i react-chartjs-2 chart.js
+
 
 
 

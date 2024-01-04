@@ -5,7 +5,7 @@
 @layer base{
 
   body{
-    @apply overscroll-none min-h-screen bg-gradient-to-b from-purple-800 to-black relative;
+    @apply overscroll-none min-h-screen bg-gradient-to-b from-sky-900 to-black relative;
   }
 
   button{

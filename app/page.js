@@ -1,114 +1,117 @@
-"use client"
+"use client";
 
-import {useState} from 'react'
+import { useState, useContext, useEffect } from "react";
+import { financeContext } from "@/lib/store/finance-context";
+import { authContext } from "@/lib/store/auth-context";
 
-import {currencyFormatter} from '@/library/utils'
+import { currencyFormatter } from "@/lib/utils";
 
-import ExpenseItem from '@/components/expenseItem'
-import Modal from '@/components/modal'
+import ExpenseCategoryItem from "@/components/ExpenseCategoryItem";
 
-import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js"
-import { Doughnut } from 'react-chartjs-2'
+import AddIncomeModal from "@/components/modals/AddIncomeModal";
+import AddExpensesModal from "@/components/modals/AddExpensesModal";
+import SignIn from "@/components/SignIn";
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-
-const DUMMY_DATA = [
-  {
-    id: 1,
-    title: "entertainment",
-    color: "#8ecae6",
-    total: 50,
-  },
-  {
-    id: 2,
-    title: "Gas",
-    color: "#219ebc",
-    total: 120,
-    },
-  {
-    id: 3,
-    title: "Groceries",
-    color: "#ffb703",
-    total: 80,
-  },
-  {
-    id: 4,
-    title: "Rent",
-    color: "#fb8500",
-    total: 975,
-    },
-  {
-    id: 5,
-    title: "Electricity",
-    color: "#023047",
-    total: 40,
-    },
-
-
-]
-
 export default function Home() {
+  const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
 
-const [modalIsOpen, setModalIsOpen] = useState(true);
+  const [balance, setBalance] = useState(0);
+
+  const { expenses, income } = useContext(financeContext);
+  const { user } = useContext(authContext);
+
+  useEffect(() => {
+    const newBalance =
+      income.reduce((total, i) => {
+        return total + i.amount;
+      }, 0) -
+      expenses.reduce((total, e) => {
+        return total + e.total;
+      }, 0);
+
+    setBalance(newBalance);
+  }, [expenses, income]);
+
+  if (!user) {
+    return <SignIn />;
+  }
 
   return (
+    <>
+      {/* Add Income Modal */}
+      <AddIncomeModal
+        show={showAddIncomeModal}
+        onClose={setShowAddIncomeModal}
+      />
 
-  <>
-  {/*modal*/}
-  <Modal show={modalIsOpen} onClose={setModalIsOpen}>
-    <h3>
-      hello world
-    </h3>
-  </Modal>
-  
-  
+      {/* Add Expenses Modal */}
+      <AddExpensesModal
+        show={showAddExpenseModal}
+        onClose={setShowAddExpenseModal}
+      />
 
+      <main className="container max-w-2xl px-6 mx-auto">
+        <section className="py-3">
+          <small className="text-gray-400 text-md">My Balance</small>
+          <h2 className="text-4xl font-bold">{currencyFormatter(balance)}</h2>
+        </section>
 
-  <main className="container max-w-2xl px-6 mx-auto">
-  <section className="py-3">
-    <small className=" text-gray-400 text-md">my balance</small>
-    <h2 className="text-4xl font-bold text-white">{currencyFormatter(100000)}</h2>
-  </section>
+        <section className="flex items-center gap-2 py-3">
+          <button
+            onClick={() => {
+              setShowAddExpenseModal(true);
+            }}
+            className="btn btn-primary"
+          >
+            + Expenses
+          </button>
+          <button
+            onClick={() => {
+              setShowAddIncomeModal(true);
+            }}
+            className="btn btn-primary-outline"
+          >
+            + Income
+          </button>
+        </section>
 
-  <section className="flex items-center gap-2 py-3">
-    <button onClick={() => { setModalIsOpen(true)}} className="btn btn-primary ">+ Expenses</button>
-    <button className="btn btn-primary-outline">+ Income</button>
-  </section>
-  <section className='py-6'>
+        {/* Expenses */}
+        <section className="py-6">
+          <h3 className="text-2xl">My Expenses</h3>
+          <div className="flex flex-col gap-4 mt-6">
+            {expenses.map((expense) => {
+              return <ExpenseCategoryItem key={expense.id} expense={expense} />;
+            })}
+          </div>
+        </section>
 
-    {/*expenses*/}
-    <h3 className='text-2xl text-white'>My Expenses</h3>
-    <div className="flex flex-col gap-4 mt-6">
-      {DUMMY_DATA.map(expense =>{
-        return (<ExpenseItem 
-        color={expense.color}
-        title={expense.title}
-        total={expense.total}
-        />
-        );
-        })}
-    </div>
-  </section>
-
-  {/* Chart Section */}
-  <section className='py-6 '>
-    <h3 className=' text-2xl text-white'>Stats</h3>
-    <div className='w-1/2 mx-auto'>
-      <Doughnut data={{
-        labels: DUMMY_DATA.map(expense => expense.title),
-        datasets: [{
-          label: "Expenses",
-          data: DUMMY_DATA.map(expense => expense.total),
-          backgroundColor: DUMMY_DATA.map(expense => expense.color),
-          borderColor: ['#18181b'],
-          borderWidth: 5
-        }]
-      }}/>
-    </div>
-
-  </section>
-
-  </main>
-  </>
+        {/* Chart Section */}
+        <section className="py-6">
+          <h3 className="text-2xl">Stats</h3>
+          <div className="w-1/2 mx-auto">
+            <Doughnut
+              data={{
+                labels: expenses.map((expense) => expense.title),
+                datasets: [
+                  {
+                    label: "Expenses",
+                    data: expenses.map((expense) => expense.total),
+                    backgroundColor: expenses.map((expense) => expense.color),
+                    borderColor: ["#18181b"],
+                    borderWidth: 5,
+                  },
+                ],
+              }}
+            />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
